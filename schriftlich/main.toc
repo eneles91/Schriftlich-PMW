@@ -2,12 +2,19 @@
 \contentsline {section}{\numberline {1}Einleitung}{1}
 \contentsline {section}{\numberline {2}Der Roboter}{1}
 \contentsline {subsection}{\numberline {2.1}Mobile Plattform}{1}
-\contentsline {subsection}{\numberline {2.2}Sensorik}{1}
-\contentsline {section}{\numberline {3}Umsetzung der Meilensteine}{1}
-\contentsline {subsection}{\numberline {3.1}Linie folgen}{1}
-\contentsline {subsection}{\numberline {3.2}Kreisfahrt}{3}
-\contentsline {subsection}{\numberline {3.3}Kollisionsfreie Korridorfahrt}{6}
-\contentsline {subsection}{\numberline {3.4}Farbfeld-Suche}{9}
-\contentsline {section}{\numberline {4}Diskussion}{9}
-\contentsline {section}{\numberline {5}Zusammenfassung}{9}
-\contentsline {section}{\numberline {A}Programmcode}{10}
+\contentsline {subsubsection}{\numberline {2.1.1}Kabelf\IeC {\"u}hrung}{2}
+\contentsline {subsubsection}{\numberline {2.1.2}Geh\IeC {\"a}useteile}{3}
+\contentsline {subsection}{\numberline {2.2}Sensorik}{4}
+\contentsline {subsubsection}{\numberline {2.2.1}Liniensensor}{4}
+\contentsline {subsubsection}{\numberline {2.2.2}Encoder}{5}
+\contentsline {subsubsection}{\numberline {2.2.3}Ultraschallsensoren}{5}
+\contentsline {subsubsection}{\numberline {2.2.4}Farbsensor}{6}
+\contentsline {section}{\numberline {3}Umsetzung der Meilensteine}{7}
+\contentsline {subsection}{\numberline {3.1}Linie folgen}{7}
+\contentsline {subsection}{\numberline {3.2}Kreisfahrt}{8}
+\contentsline {subsection}{\numberline {3.3}Kollisionsfreie Korridorfahrt}{11}
+\contentsline {subsection}{\numberline {3.4}Farbfeld-Suche}{15}
+\contentsline {section}{\numberline {4}Diskussion}{16}
+\contentsline {section}{\numberline {5}Zusammenfassung}{17}
+\contentsline {section}{\numberline {A}Abk\IeC {\"u}rzungsverzeichnis}{19}
+\contentsline {section}{\numberline {A}Programmcode}{20}
