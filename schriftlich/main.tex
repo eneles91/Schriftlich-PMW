@@ -9,6 +9,7 @@
 \usepackage[ngerman]{babel}            %   neue deutsche Rechtschreibung
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{subfigure} 
 
 \usepackage{color}
 \usepackage{graphicx}
@@ -101,7 +102,7 @@ v = \frac{k d \pi}{1440\Delta T}
 
 Da der Signalpegel des Drehgebers im Zeitraum von 0,1 Sekunden ausreichend hoch ist, um eine Geschwindigkeit zu berechnen, kann Messrauschen durch ungenaue Fertigung der Encoder vernachlässigt werden. Demzufolge führt die Mittelwertbildung mehrerer Drehzahlsignale zu keiner Verbesserung in der Regelung.
 
-Zur Regelung wird ein PID-Regler mit einer Taktrate von $10Hz$ implementiert. Somit wird bei jeder Erfassung der aktuellen Geschwindigkeit eine Änderung dieser durch den Regler vorgenommen. Abbildung ... zeigt ein Blockschaltbild des verwendeten PID-Reglers. 
+Zur Regelung wird ein PID-Regler mit einer Taktrate von $10Hz$ implementiert. Somit wird bei jeder Erfassung der aktuellen Geschwindigkeit eine Änderung dieser durch den Regler vorgenommen. Abbildung \ref{fig:PID_controller}  zeigt ein Blockschaltbild des verwendeten PID-Reglers. 
 
 \begin{figure}[!htb]
 	\centering
@@ -173,11 +174,62 @@ In den weiteren Aufgabenteilen wird die Geschwindigkeitsregelung beibehalten, da
 	
 \subsection{Kollisionsfreie Korridorfahrt}
 
-Aufgabe des 3. Meilensteins war eine kollinsionsfreie Fahrt durch ein Labyrinth mit einem konstanten Wandabstand von 35 cm. Die Rechts- und Linksabbiegungen der Strecke verlaufen dabei alle mit einem Winkel von 90 Grad. Zur Messung des Abstands von Roboter zu Wand wurden zwei Ultraschallsensoren (siehe Kapitel 2.2) angeschlossen und in einer Klasse \textit{Ultrasonic} angesprochen. Über einen separaten Thread werden die Sensoren nacheinander 
+Herausforderung des 3. Meilensteins war eine kollinsionsfreie Fahrt durch ein Labyrinth mit einem konstanten Wandabstand von 35 cm. Die Rechts- und Linksabbiegungen der Strecke verlaufen dabei alle mit einem Winkel von 90 Grad. Zur Messung des absoluten Abstands von Roboter zu Wand wurden zwei Ultraschallsensoren (siehe Kapitel 2.2) angeschlossen und aus einer Klasse \textit{Ultrasonic} angesprochen. Die Sensoren werden nacheinander ausgelesen um Interferenzen und somit Fehler bei der Distanzmessung zu vermeiden. Des weiteren wurden die Ultraschallsensoren nicht direkt seitlich an der Plattform angebracht, sondern mit einem leichten Winkelversatz von 30 Grad nach vorne montiert. Abbildung \ref{fig:kurve} zeigt, dass dies ein Vorausschauen des Roboters und somit die rechtzeitige Erkennung von Abbiegungen bewirkt. Zudem verringert diese Art der Anbringung Messunsicherheiten des Ultraschallsensors, die sich auf schrägen Oberflächen einstellen.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.3]{figs/kurve}
+	\caption{Anbringung der Ultraschallsensoren im Hinblick auf Kurvenverhalten}
+	\label{fig:kurve}
+\end{figure}
+
+Das UML-Diagramm in Abbildung ... veranschaulicht, den Zusammenhang der Klasse \textit{Mobileplatform} und \textit{Ultrasonic}. Es ist ersichtlich, dass \textit{Mobileplatform} vollständigen zugriff auf Funktionalitäten der Ultraschallsensoren erhält. Somit eignet sich diese Klasse gut für die Implementierung des Algorithmus zur Korridorfahrt, der die Erkennung von Hindernissen gewährleisten soll. Zur Regelung des Roboters während der Fahrt wurden im Rahmen dieser Arbeit drei verschiedene Ansätze mir unterschiedlicher Anordnung der Ultraschallsensoren erprobt. Diese verschiedenen Strategien werden im Folgenden erläutert und mit Abbildung \ref{fig:ansatz} unterstützt.
+
+\begin{figure}[!htb]
+	\centering
+		\subfigure[Berücksichtung Winkelversatz]
+		{\includegraphics[scale=.35]{figs/ansatz2}}
+	\hspace{5mm}
+	\subfigure[Distanzmessung beider Seiten]
+	{\includegraphics[scale=.35]{figs/ansatz}}
+	\caption{Position des Roboters im Korridor}
+	\label{fig:ansatz}
+\end{figure}
+
+In Abbildung \ref{fig:ansatz}(a) sind zwei Sensoren seitlich am Roboter montiert und einer in Fahrtrichtung. Der Ansatz des Algorithmus beruht auf einer Orientierung an der Linken Wand des Korridors. Dabei werden wird sowohl der Winkelversatz, als auch der Abstand zur Wand in der Fahrt des Roboters berücksichtigt und korrigiert. Der vordere Sensor detektiert, ob sich ein Hindernis in Fahrtrichtung befindet und ein Abbiegevorgang ausgeführt werden muss. \\
+Der zweite und dritte erprobte Ansatz wird mit der zuvor beschriebenen winkelversetzten Sensorkonfiguration ausgeführt. Beide Ansätze beruhen darauf eine Soll-Distanz zu beiden Wänden einzuhalten und den Roboter somit mittig im Korridor zu halten (Abbildung \ref{fig:ansatz}). \\
+Dies wurde im Rahmen des zweiten Ansatzes dadurch realisiert, das Verhältnis aus $Dist_{Links}$ und $Dist_{Rechts}$ mit der Initialgeschwindigkeit beider Motoren zu multiplizieren. Somit ergeben sich nach Gleichung \ref{eq:verhaeltnis1} und \ref{eq:verhaeltnis2} für beide Räder neue Soll-Geschwindigkeiten. Diese Geschwindigkeiten sind dabei auf einen Bereich zwischen $0,05$ und $0.4$ Meter pro Sekunde begrenzt.
+
+\begin{center}
+	\begin{equation}
+	v_{Rechts} = v \cdot \frac{Dist_{Links}}{Dist_{Rechts}}
+	\label{eq:verhaeltnis1}
+	\end{equation}
+\end{center}
+
+\begin{center}
+	\begin{equation}
+	v_{Links} = v \cdot \frac{Dist_{Rechts}}{Dist_{Links}}
+	\label{eq:verhaeltnis2}
+	\end{equation}
+\end{center} 
+
+Da sich bei Abbiegungen ein entsprechend großes Verhältnis einstellt, ist dieser Ansatz auch für Abbiegevorgänge geeignet. \\
+Als dritte Option, wurde eine Abstandsregelung mittels zweier P-Regler implementiert. Diese setzte sich im aufgrund ihrer Robustheit und sich einstellenden Fahrtruhe gegen die zuvor genannten Verfahren durch. Da die Ultraschallsensoren, aufgrund ihrer Positionierung nicht den direkten Abstand zur Wand messen, wurde zur Bestimmung der Soll-Größen eine Referenzmessung durchgeführt, bei der der Roboter mittig im Korridor platziert wurde. Somit ergab sich bei mittiger Fahrt eine minimale Regelabweichung $e$. Ein Blockdiagramm des verwendeten P-Reglers ist in Abbildung ... zu sehen.\\
+Die Ermittlung der proportionalen Regelverstärkung erfolgte empirisch. Dabei musste ein Kompromiss aus steiler Kurveneinlenkung und ruhiger Geradeausfahrt gefunden werden. Abbildung ... zeigt, dass sich bei geringen Verstärkungen der Regeldifferenz zwar ein ruhiges Fahrverhalten auf gerader Strecke ergibt, das Einlenken in Kurven jedoch durch zu träge ist und zu Kollisionen führen kann. Analog dazu ergibt sich bei großer Fehlerverstärkung eine ungleichmäßige, zur Seite schwingende Geradeausfahrt, die bis zum Kontakt mit den Seitenwänden führen dann. In Kurven agiert der Roboter hingegen hoch dynamisch (Abbildung ...).
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.3]{figs/kurve}
+	\caption{Anbringung der Ultraschallsensoren im Hinblick auf Kurvenverhalten}
+	\label{fig:kurve}
+\end{figure}
+
+\newpage
 
 \subsection{Farbfeld-Suche}
 	
-Beim letzten Meilensteins, der auch als "Roboter-Challenge" bezeichnet wird, handelt es sich um eine Erweiterung der kollisionsfreien Korridorfahrt. Die abzufahrende Strecke wird vergrößert und um weitere Abbiegungen erweitert, welche nicht mehr nur um 90 Grad, sondern auch in einem beliebigen Winkel abknicken können. Zudem werden im Labyrinth Farbfelder in den Farben Rot, Grün und Blau ausgelegt. Diese werden über einen RGB-Farbsensor des Typs "FLORA Color Sensor" detektiert. Über eine Klasse \textit{Colorsensor}, die in der \textit{Mobileplatform}  implementiert ist, können die einzelnen RGB-Farben über 16-Bit-Integer ausgelesen werden.
+Beim letzten Meilensteins, der auch als "Roboter-Challenge" bezeichnet wird, handelt es sich um eine Erweiterung der kollisionsfreien Korridorfahrt. Die abzufahrende Strecke wird vergrößert und um weitere Abbiegungen erweitert, welche nicht mehr nur um 90 Grad, sondern auch in einem beliebigen Winkel abknicken können. Zudem werden im Labyrinth Hindernisse in Form einer Wippe und einer Bodenwelle verteilt und Farbfelder in den Farben Rot, Grün und Blau ausgelegt. Die Hindernisse sind ohne weitere Veränderung des Algorithmus zu bewältigen, was auf den Geschwindigkeitsregler zurückzuführen ist, der einer Verringerung der Geschwindigkeit auf einer Steigung entgegenwirkt. Die Farbfelder der werden über einen RGB-Farbsensor des Typs "FLORA Color Sensor" detektiert. Über eine Klasse \textit{Colorsensor}, die in der \textit{Mobileplatform}  implementiert ist, können die einzelnen RGB-Farben über 16-Bit-Integer ausgelesen werden.
 Der Parkour ist dann erfolgreich abgeschlossen, wenn der Roboter ohne Kollisionen über die Hindernisse fährt und schließlich auf dem roten Farbfeld stehen bleibt. 
 
 Da für die Parkourfahrt nur das rote Farbfeld von Bedeutung ist, wird die Farbe Rot nach im Verhältnis zu Grün und Blau identifiziert. Die dabei benutzten Schwellenwerte wurden dabei empirisch ermittelt. 

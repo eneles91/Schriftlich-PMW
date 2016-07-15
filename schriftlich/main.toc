@@ -7,7 +7,7 @@
 \contentsline {subsection}{\numberline {3.1}Linie folgen}{1}
 \contentsline {subsection}{\numberline {3.2}Kreisfahrt}{3}
 \contentsline {subsection}{\numberline {3.3}Kollisionsfreie Korridorfahrt}{6}
-\contentsline {subsection}{\numberline {3.4}Farbfeld-Suche}{6}
-\contentsline {section}{\numberline {4}Diskussion}{6}
-\contentsline {section}{\numberline {5}Zusammenfassung}{6}
-\contentsline {section}{\numberline {A}Programmcode}{7}
+\contentsline {subsection}{\numberline {3.4}Farbfeld-Suche}{9}
+\contentsline {section}{\numberline {4}Diskussion}{9}
+\contentsline {section}{\numberline {5}Zusammenfassung}{9}
+\contentsline {section}{\numberline {A}Programmcode}{10}
